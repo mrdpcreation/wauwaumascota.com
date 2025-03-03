@@ -1,5 +1,5 @@
 ﻿{
-  "name": "@wauwaumascota/ui",
+  "name": "@wauwau/ui",
   "version": "0.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
