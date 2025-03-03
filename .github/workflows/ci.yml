@@ -2,30 +2,40 @@
 
 on:
   push:
-    branches: ['main']
+    branches: [ main, develop ]
   pull_request:
-    types: [opened, synchronize]
+    branches: [ main, develop ]
 
 jobs:
-  build:
-    name: Build and Test
-    timeout-minutes: 15
+  validate:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
+      - uses: actions/checkout@v3
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
           cache: 'yarn'
-
+          
       - name: Install dependencies
-        run: yarn install
-
-      - name: Build
-        run: yarn build
+        run: yarn install --frozen-lockfile
+        
+      - name: Type check
+        run: yarn type-check
+        
+      - name: Lint
+        run: yarn lint
+        
+      - name: Test
+        run: yarn test
+        
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
